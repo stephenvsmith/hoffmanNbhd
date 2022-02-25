@@ -320,7 +320,6 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   # saveRDS(localfci_result$mbList,paste0("mbList",num,".rds"))
   # saveRDS(localfci_result$data_means,paste0("dataMeans",num,".rds"))
   # saveRDS(localfci_result$data_cov,paste0("dataCov",num,".rds"))
->>>>>>> 6284eb9dc6eeca9260e3412af540de8dc494c3c9
   
   return(results)
 }
