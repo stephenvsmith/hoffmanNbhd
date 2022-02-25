@@ -18,7 +18,7 @@ source(paste0(home_dir,'hoffmanNbhd/helperfunctions.R'))
 set.seed(555)
 
 # Download the newest version of the Local FCI package
-#devtools::install_github("stephenvsmith/LocalFCI") # ,quiet=TRUE
+devtools::install_github("stephenvsmith/LocalFCI") # ,quiet=TRUE
 
 alpha <- c(0.01,0.001,0.0001)
 mb_alpha <- c(0.01,0.05,0.1,0.2)

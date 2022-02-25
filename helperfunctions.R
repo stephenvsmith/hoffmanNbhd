@@ -291,7 +291,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   results <- cbind(results,mbRecovery(mb_metrics))
 
   saveRDS(results,file = paste0("results_df",num,".rds"))
-<<<<<<< HEAD
+
   # capture.output(results %>% select(size,num_edges,contains("pc")),
   #                file = paste0("results_pc",num,".txt"))
   # capture.output(results %>% select(size,num_edges,contains("fci")),
@@ -305,7 +305,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   # saveRDS(localfci_result$data_cov,paste0("dataCov",num,".rds"))
   
   saveRDS(mb_metrics,paste0("mbMetrics",num,".rds"))
-=======
+
   
   # Testing Diagnostics
   
