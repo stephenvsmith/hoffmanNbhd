@@ -1,6 +1,3 @@
-### Timing
-start <- Sys.time()
-
 ### Directories (Testing)
 home_dir <- '/home/stephen'
 #home_dir <- '/Users/stephensmith'

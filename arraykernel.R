@@ -99,11 +99,3 @@ results_list <- lapply(1:num_trials,function(num){
 
 results_total <- data.frame(do.call(rbind,results_list))
 saveRDS(results_total,"results_total.rds")
-
-
-end <- Sys.time()
-d <- as.numeric(difftime(end,start,units="sec"))
-if (d < 300){
-  cat("Program finished in",d,"seconds, which is early. Going to sleep now.\n")
-  Sys.sleep(320-d)
-}
