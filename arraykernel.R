@@ -1,30 +1,6 @@
-### Timing
-start <- Sys.time()
-
-# ### Directories (Testing)
-# home_dir <- '/home/stephen'
-# #home_dir <- '/Users/stephensmith'
-# result_dir <- paste0(home_dir,'/Desktop/','ResultsNbhd-',format(Sys.Date(),"%m-%y"))
-# rds_dir <- paste0(home_dir,'/Dropbox/Academics/Research/Code/Networks/rds')
-# data_gen_file <- paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/data_gen.R')
-
-### Directories (Hoffman)
-home_dir <- '/u/home/s/stephens'
-scratch_dir <- '/u/scratch/s/stephens'
-result_dir <- paste0(scratch_dir,'/ResultsNbhd-',format(Sys.Date(),"%m-%y"))
-rds_dir <- paste0(home_dir,'/Networks/rds')
-data_gen_file <- paste0(home_dir,'/data_gen.R')
-
-# ### Setup (Testing)
-# source(paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/HoffmanNbhdArray/helperfunctions.R'))
-# sim_vals <- read.csv(paste0(home_dir,'/Desktop/ResultsNbhd-02-22/sim_vals.csv'))
-# array_num <- sample(1:nrow(sim_vals),1)
-# 
-# cat("Simulation",array_num,file = "~/Desktop/lastSim.txt")
-
-### Setup (Hoffman)
-source(paste0(home_dir,'/hoffman/helperfunctions.R'))
-array_num <- as.numeric(Sys.getenv("SGE_TASK_ID"))
+##########################################################################
+# This file provides the kernel for arrayscript{test|hoffman}.R
+##########################################################################
 
 source(data_gen_file)
 
@@ -105,7 +81,7 @@ results_list <- lapply(1:num_trials,function(num){
   
   # Run Global PC Algorithm
   results_pc <- run_global_pc(df_list[[num]])
-
+  
   # Run Local FCI Algorithm
   results_df <- mclapply(targets,
                          run_fci_target,
@@ -128,7 +104,6 @@ saveRDS(results_total,"results_total.rds")
 end <- Sys.time()
 d <- as.numeric(difftime(end,start,units="sec"))
 if (d < 300){
-    cat("Program finished in",d,"seconds, which is early. Going to sleep now.\n")
-    Sys.sleep(320-d)
+  cat("Program finished in",d,"seconds, which is early. Going to sleep now.\n")
+  Sys.sleep(320-d)
 }
-

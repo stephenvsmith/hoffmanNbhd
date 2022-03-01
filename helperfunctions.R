@@ -219,6 +219,7 @@ run_local_fci <- function(t,df,num,results_pc,algo){
   results_pc$lmax[["Local FCI"]] <- lmax
   true_dag <- network_info$true_dag
   start <- Sys.time()
+
   localfci_result <- localfci_cpp(data=df,
                                   targets=t,
                                   lmax=lmax,
@@ -261,7 +262,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
                          pc_mat,
                          sapply(t,function(t) {which(nbhd==t)-1}),verbose = FALSE) # Need to check out the sapply here
   nbhd_metrics <- neighborhood_metrics(true_neighborhood_graph)
-  mb_metrics <- mbRecoveryMetrics(network_info$cpdag,localfci_result$referenceDAG,t)
+  mb_metrics <- mbRecoveryMetricsList(network_info$cpdag,localfci_result$referenceDAG,t)
   mb_time <- getTotalMBTime(localfci_result$mbList)
 
   results <- cbind(nbhd_metrics,results)
