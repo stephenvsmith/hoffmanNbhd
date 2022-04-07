@@ -7,7 +7,7 @@ set.seed(555)
 # Download the newest version of the Local FCI package
 devtools::install_github("stephenvsmith/LocalFCI") # ,quiet=TRUE
 
-alpha <- c(0.01,0.001,0.0001)
+alpha <- c(0.01,0.001,0.0001,1e-5,1e-6)
 mb_alpha <- c(0.01,0.05,0.1,0.2)
 net_names <- gsub(".rds","",list.files(rds_dir))
 nets_to_skip <- c("diabetes","link","munin","munin1")

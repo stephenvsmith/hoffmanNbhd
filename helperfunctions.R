@@ -42,6 +42,7 @@ get_network_DAG <- function(net){
 
 simulation_data_creation <- function(){
   # Check to see if the data has been generated already
+  go_to_dir("data")
   sims_not_created <- check_sims_created(n)
   # Generate Data
   if (sims_not_created){
@@ -51,12 +52,15 @@ simulation_data_creation <- function(){
                               out.dir=getwd(),
                               verbose=FALSE,
                               path.start=home_dir)
+    file.rename(paste0(net,"; n = ",n,"; c = 0"),
+                paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
   }
+ setwd("..") # Return to the original directory
 }
 
 # Check whether or not simulations have been created so they do not have to be created again
 check_sims_created <- function(n){
-  sim_file <- paste0(net,"; n = ",n,"; c = 0")
+  sim_file <- paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high)
   if (dir.exists(sim_file)){
     files <- list.files(sim_file) # Get the list of files in this directory
     files_of_interest <- c("data[[:digit:]]+.txt") 
@@ -78,10 +82,11 @@ sims_text_output <- function(){
 
 # Grab dataframe for network at given sample size
 grab_data <- function(df_num){
-  go_to_dir(paste0(net,"; ","n = ",n,"; c = 0"))
+  go_to_dir("data")
+  go_to_dir(paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
   df <- read.table(paste0("data",df_num,".txt"))
   colnames(df) <- network_info$node_names
-  setwd("..")
+  setwd("../..")
   return(df)
 }
 
@@ -89,11 +94,11 @@ grab_data <- function(df_num){
 
 check_targets_defined_get_targets <- function(net_info){
   # Determine whether or not targets have been defined
-  if (!file.exists("targets.rds")){
+  if (!file.exists(paste0("targets_",net,".rds"))){
     targets <- get_targets(net_info$p)
-    saveRDS(targets,"targets.rds")
+    saveRDS(targets,paste0("targets_",net,".rds"))
   } else {
-    targets <- readRDS("targets.rds")
+    targets <- readRDS(paste0("targets_",net,".rds"))
     cat("Targets for",net,"obtained from file.\n")
   }
 
@@ -143,9 +148,9 @@ run_global_pc <- function(df){
   time_diff <- list()
   lmax_list <- list()
   num_tests <- list()
-  
+
   largest_possible_sepset <- 5
-  pc_test_file <- "pc_tests.txt"
+  pc_test_file <- paste0("pc_",array_num,"_tests.txt")
   sink(file = pc_test_file)
   start <- Sys.time()
   pc.fit <- as(pc(suffStat = list(C = cor(df), n = n),
@@ -203,7 +208,7 @@ get_pc_test_num <- function(file){
 run_fci_target <- function(t,df,num,results_pc,algo,curr_dir){
   output_text(t,num,algo)
   setwd(curr_dir)
-  vars <- create_target_directory(t)
+  # vars <- create_target_directory(t) 
   # Run local FCI
   results <- run_local_fci(t,df,num,results_pc,algo)
   
@@ -251,7 +256,6 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   true_neighborhood_graph <- network_info$cpdag[nbhd,nbhd] # CPDAG is Ground Truth
   localfci_mat <- localfci_result$amat[nbhd,nbhd]
   # Compare results
-
   if (length(nbhd)==1){
     pc_mat <- as.matrix(pc_mat,nrow=1,ncol=1)
     localfci_mat <- as.matrix(localfci_mat,nrow=1,ncol=1)
@@ -289,9 +293,9 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
            nodes=paste(localfci_result$Nodes,collapse = ",")
            )
 
-  results <- cbind(results,mbRecovery(mb_metrics))
+  results <- cbind(results,data.frame(as.list(mbRecovery(network_info$cpdag,localfci_result$referenceDAG,t))))
 
-  saveRDS(results,file = paste0("results_df",num,".rds"))
+  # saveRDS(results,file = paste0("results_df",num,".rds"))
 
   # capture.output(results %>% select(size,num_edges,contains("pc")),
   #                file = paste0("results_pc",num,".txt"))
@@ -305,7 +309,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   # saveRDS(localfci_result$data_means,paste0("dataMeans",num,".rds"))
   # saveRDS(localfci_result$data_cov,paste0("dataCov",num,".rds"))
   
-  saveRDS(mb_metrics,paste0("mbMetrics",num,".rds"))
+  # saveRDS(mb_metrics,paste0("mbMetrics",num,".rds"))
 
   
   # Testing Diagnostics

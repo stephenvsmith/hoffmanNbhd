@@ -42,10 +42,6 @@ cat("ub:",ub,"\n")
 cat("n:",n,"\n")
 cat("algo:",algo,"\n")
 
-go_to_dir(paste0("alpha=",alpha))
-go_to_dir(paste0("mb_alpha=",mb_alpha))
-go_to_dir(net)
-
 # Obtain network information, including the true DAG adj. mat.
 network_info <- get_network_DAG(net)
 
@@ -61,11 +57,6 @@ high <- high
 data.grid$ub <- ub
 data.grid$high <- high
 
-go_to_dir(paste0("N=",data.grid$n.obs))
-go_to_dir(paste0("UB=",data.grid$ub))
-go_to_dir(paste0("High=",data.grid$high))
-go_to_dir(paste0("Algorithm=",algo))
-
 # Generate the data
 simulation_data_creation()
 
@@ -77,12 +68,12 @@ curr_dir <- getwd()
 
 # Get results for each trial
 results_list <- lapply(1:num_trials,function(num){
-  setwd(curr_dir)
-  
+
   # Run Global PC Algorithm
+  trial_num <- num
   results_pc <- run_global_pc(df_list[[num]])
-  
-  # Run Local FCI Algorithm
+
+    # Run Local FCI Algorithm
   results_df <- mclapply(targets,
                          run_fci_target,
                          df=df_list[[num]],
@@ -92,10 +83,17 @@ results_list <- lapply(1:num_trials,function(num){
                          curr_dir,
                          mc.preschedule = FALSE,mc.cores = 1)
   results_final_df <- data.frame(do.call(rbind,results_df))
+  saveRDS(results_final_df,paste0("results_",array_num,"_",num,".rds"))
   setwd(curr_dir)
-  saveRDS(results_final_df,paste0("results_df",num,".rds"))
   return(results_final_df)
 })
 
-results_total <- data.frame(do.call(rbind,results_list))
-saveRDS(results_total,"results_total.rds")
+results_iteration <- data.frame(do.call(rbind,results_list))
+saveRDS(results_iteration,paste0("results_",array_num,".rds"))
+# TODO: SAVE LOCALFCI OBJECTS AND PC OBJECTS IN CASE IT HELPS
+# Remove temporary files (if the program gets to this point)
+for (i in 1:num_trials){
+  unlink(paste0("results_",array_num,"_",i,".rds"))
+}
+
+
