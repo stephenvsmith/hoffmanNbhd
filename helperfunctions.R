@@ -52,8 +52,13 @@ simulation_data_creation <- function(){
                               out.dir=getwd(),
                               verbose=FALSE,
                               path.start=home_dir)
-    file.rename(paste0(net,"; n = ",n,"; c = 0"),
+    dir.create(paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
+    data_files <- list.files(paste0(net,"; n = ",n,"; c = 0"))
+    sapply(data_files,function(f){
+      file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
                 paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
+    })
+    unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
   }
  setwd("..") # Return to the original directory
 }
