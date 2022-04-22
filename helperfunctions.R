@@ -47,16 +47,15 @@ simulation_data_creation <- function(){
   # Generate Data
   if (sims_not_created){
     sims_text_output()
-    
     gdg <- generate.data.grid(data.grid,
                               out.dir=getwd(),
                               verbose=FALSE,
                               path.start=home_dir)
-    dir.create(paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
+    dir.create(paste0(net,"_",array_num))
     data_files <- list.files(paste0(net,"; n = ",n,"; c = 0"))
     sapply(data_files,function(f){
       file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
-                paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
+                paste0(net,"_",array_num))
     })
     unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
   }
@@ -65,7 +64,7 @@ simulation_data_creation <- function(){
 
 # Check whether or not simulations have been created so they do not have to be created again
 check_sims_created <- function(n){
-  sim_file <- paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high)
+  sim_file <- paste0(net,"_",array_num)
   if (dir.exists(sim_file)){
     files <- list.files(sim_file) # Get the list of files in this directory
     files_of_interest <- c("data[[:digit:]]+.txt") 
@@ -73,7 +72,6 @@ check_sims_created <- function(n){
   } else {
     sims_not_created <- TRUE
   }
-  
   return(sims_not_created)
 }
 
@@ -88,7 +86,7 @@ sims_text_output <- function(){
 # Grab dataframe for network at given sample size
 grab_data <- function(df_num){
   go_to_dir("data")
-  go_to_dir(paste0(net,"; n = ",n,"; ub = ",ub,"; high = ",high))
+  go_to_dir(paste0(net,"_",array_num))
   df <- read.table(paste0("data",df_num,".txt"))
   colnames(df) <- network_info$node_names
   setwd("../..")
@@ -271,7 +269,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
                          pc_mat,
                          sapply(t,function(t) {which(nbhd==t)-1}),verbose = FALSE) # Need to check out the sapply here
   nbhd_metrics <- neighborhood_metrics(true_neighborhood_graph)
-  mb_metrics <- mbRecoveryMetricsList(network_info$cpdag,localfci_result$referenceDAG,t)
+  mb_metrics <- mbRecovery(network_info$cpdag,localfci_result$referenceDAG,t)
   mb_time <- getTotalMBTime(localfci_result$mbList)
 
   results <- cbind(nbhd_metrics,results)
