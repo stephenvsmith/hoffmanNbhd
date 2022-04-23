@@ -49,14 +49,15 @@ simulation_data_creation <- function(){
     sims_text_output()
     gdg <- generate.data.grid(data.grid,
                               out.dir=getwd(),
+                              array_num=array_num,
                               verbose=FALSE,
                               path.start=home_dir)
-    dir.create(paste0(net,"_",array_num))
-    data_files <- list.files(paste0(net,"; n = ",n,"; c = 0"))
-    sapply(data_files,function(f){
-      file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
-                paste0(net,"_",array_num))
-    })
+    # dir.create(paste0(net,"_",array_num))
+    # data_files <- list.files(paste0(net,"; n = ",n,"; c = 0"))
+    # sapply(data_files,function(f){
+    #   file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
+    #             paste0(net,"_",array_num))
+    # })
     cat("finished",file = paste0(net,"_",array_num,"/marker.txt"))
     #unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
   } else {
@@ -70,16 +71,15 @@ check_sims_created <- function(n){
   sim_file <- paste0(net,"_",array_num)
   if (dir.exists(sim_file)){
     files <- list.files(sim_file) # Get the list of files in this directory\
-    browser()
-    
+
     files_of_interest <- files[str_detect("data[[:digit:]]+.txt")]
-    #sims_not_created <- !any(str_detect(files,files_of_interest)) # True if there are no "data" + digit + ".txt" files
-    
+    sims_not_created <- !any(str_detect(files,files_of_interest)) # True if there are no "data" + digit + ".txt" files
+
   } else {
     sims_not_created <- TRUE
   }
   #return(sims_not_created)
-  return(!dir.exists(paste0(net,"; n = ",n,"; c = 0/")))
+
 }
 
 sims_text_output <- function(){
