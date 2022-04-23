@@ -57,7 +57,7 @@ simulation_data_creation <- function(){
       file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
                 paste0(net,"_",array_num))
     })
-    unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
+    #unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
   }
  setwd("..") # Return to the original directory
 }
@@ -87,10 +87,22 @@ sims_text_output <- function(){
 grab_data <- function(df_num){
   go_to_dir("data")
   go_to_dir(paste0(net,"_",array_num))
+  check <- check_file(paste0("data",df_num,".txt"))
   df <- read.table(paste0("data",df_num,".txt"))
   colnames(df) <- network_info$node_names
   setwd("../..")
   return(df)
+}
+
+check_file <- function(f_name){
+  files <- list.files()
+  i <- 0
+  while (!(f_name %in% files) & i < 20){
+    i <- i + 1
+    Sys.sleep(3)
+    files <- list.files()
+  }
+  return(f_name %in% list.files())
 }
 
 # Target functions --------------------------------------------------------
@@ -280,7 +292,9 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
            fci_time=pc_results$time_diff[["Local FCI"]]) %>%
     mutate(lmax_pc = pc_results$lmax$PC,
            lmax_fci=pc_results$lmax[["Local FCI"]]) %>% 
-    mutate(alpha=alpha,
+    mutate(sim_number=array_num,
+           alpha=alpha,
+           mb_alpha=mb_alpha,
            net=net,
            n=n,
            ub=ub,
