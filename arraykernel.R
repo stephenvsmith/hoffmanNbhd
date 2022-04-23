@@ -61,6 +61,7 @@ data.grid$high <- high
 simulation_data_creation()
 
 # Grab simulated data
+cat("Grabbing data\n")
 df_list <- lapply(1:num_trials,function(i) grab_data(i))
 
 # Keep network directory
@@ -71,9 +72,11 @@ results_list <- lapply(1:num_trials,function(num){
 
   # Run Global PC Algorithm
   trial_num <- num
+  cat("Starting PC\n")
   results_pc <- run_global_pc(df_list[[num]])
 
     # Run Local FCI Algorithm
+  cat("Staring FCI\n")
   results_df <- mclapply(targets,
                          run_fci_target,
                          df=df_list[[num]],

@@ -59,6 +59,8 @@ simulation_data_creation <- function(){
     })
     cat("finished",file = paste0(net,"_",array_num,"/marker.txt"))
     #unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
+  } else {
+    Sys.sleep(60)
   }
  setwd("..") # Return to the original directory
 }
@@ -67,13 +69,17 @@ simulation_data_creation <- function(){
 check_sims_created <- function(n){
   sim_file <- paste0(net,"_",array_num)
   if (dir.exists(sim_file)){
-    files <- list.files(sim_file) # Get the list of files in this directory
-    files_of_interest <- c("data[[:digit:]]+.txt") 
-    sims_not_created <- !any(str_detect(files,files_of_interest)) # True if there are no "data" + digit + ".txt" files
+    files <- list.files(sim_file) # Get the list of files in this directory\
+    browser()
+    
+    files_of_interest <- files[str_detect("data[[:digit:]]+.txt")]
+    #sims_not_created <- !any(str_detect(files,files_of_interest)) # True if there are no "data" + digit + ".txt" files
+    
   } else {
     sims_not_created <- TRUE
   }
-  return(sims_not_created)
+  #return(sims_not_created)
+  return(!dir.exists(paste0(net,"; n = ",n,"; c = 0/")))
 }
 
 sims_text_output <- function(){
