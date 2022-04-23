@@ -88,6 +88,11 @@ grab_data <- function(df_num){
   go_to_dir("data")
   go_to_dir(paste0(net,"_",array_num))
   check <- check_file(paste0("data",df_num,".txt"))
+  if (!check){
+    cat("The data did not pass the check. File size:",file.size(paste0("data",df_num,".txt")),"\n")
+  } else {
+    cat("The data did pass the check. File size:",file.size(paste0("data",df_num,".txt")),"\n")
+  }
   df <- read.table(paste0("data",df_num,".txt"))
   colnames(df) <- network_info$node_names
   setwd("../..")
@@ -97,7 +102,7 @@ grab_data <- function(df_num){
 check_file <- function(f_name){
   files <- list.files()
   i <- 0
-  while (!(f_name %in% files) & i < 20){
+  while (!(f_name %in% files) & file.size(f_name)<1000 & i < 20){
     i <- i + 1
     Sys.sleep(3)
     files <- list.files()
