@@ -57,6 +57,7 @@ simulation_data_creation <- function(){
       file.copy(paste0(net,"; n = ",n,"; c = 0/",f),
                 paste0(net,"_",array_num))
     })
+    cat("finished",file = paste0(net,"_",array_num,"/marker.txt"))
     #unlink(paste0(net,"; n = ",n,"; c = 0"),recursive = TRUE)
   }
  setwd("..") # Return to the original directory
@@ -102,7 +103,7 @@ grab_data <- function(df_num){
 check_file <- function(f_name){
   files <- list.files()
   i <- 0
-  while (!(f_name %in% files) & file.size(f_name)<1000 & i < 20){
+  while (!(file.exists("marker.txt")) & i < 20){
     i <- i + 1
     Sys.sleep(3)
     files <- list.files()
