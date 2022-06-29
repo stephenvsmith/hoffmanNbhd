@@ -71,14 +71,11 @@ check_sims_created <- function(n){
   sim_file <- paste0(net,"_",array_num)
   if (dir.exists(sim_file)){
     files <- list.files(sim_file) # Get the list of files in this directory\
-
-    files_of_interest <- files[str_detect("data[[:digit:]]+.txt")]
-    sims_not_created <- !any(str_detect(files,files_of_interest)) # True if there are no "data" + digit + ".txt" files
-
+    sims_not_created <- !any(str_detect(files,"data[[:digit:]]+.txt"))
   } else {
     sims_not_created <- TRUE
   }
-  #return(sims_not_created)
+  return(sims_not_created)
 
 }
 
@@ -276,7 +273,8 @@ create_target_directory <- function(t){
 
 # Compile all results about the simulation
 neighborhood_results <- function(t,localfci_result,pc_results,num){
-  nbhd <- localfci_result$Nodes # Need to write a function to get the correct neighborhood
+  nbhd <- check_neighbors_retrieval(network_info$p,network_info$node_names,network_info$true_dag,t-1)+1
+  nbhd <- sort(c(t,nbhd))
   # Zoom in on estimated and true DAGs (only the target and first-order neighbors)
   nodes_zoom <- network_info$node_names[nbhd]
   pc_mat <- matrix(pc_results$pc,nrow = network_info$p)[nbhd,nbhd]

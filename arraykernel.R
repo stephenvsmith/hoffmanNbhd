@@ -3,7 +3,6 @@
 ##########################################################################
 
 source(data_gen_file)
-
 num_trials <- 5
 max_targets <- 4
 
@@ -40,9 +39,10 @@ cat("Network:",net,"\n")
 cat("high:",high,"\n")
 cat("ub:",ub,"\n")
 cat("n:",n,"\n")
-cat("algo:",algo,"\n")
+cat("MB algo:",algo,"\n")
 
 # Obtain network information, including the true DAG adj. mat.
+
 network_info <- get_network_DAG(net)
 
 # Generate/Retrieve Targets
