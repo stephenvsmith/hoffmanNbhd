@@ -167,7 +167,6 @@ get_targets <- function(p){
 
 # Run global PC 
 run_global_pc <- function(df){
-  
   # Lists to store results
   time_diff <- list()
   lmax_list <- list()
@@ -248,7 +247,7 @@ run_local_fci <- function(t,df,num,results_pc,algo){
   results_pc$lmax[["Local FCI"]] <- lmax
   true_dag <- network_info$true_dag
   start <- Sys.time()
-
+  
   localfci_result <- localfci_cpp(data=df,
                                   targets=t,
                                   lmax=lmax,
@@ -273,8 +272,15 @@ create_target_directory <- function(t){
 
 # Compile all results about the simulation
 neighborhood_results <- function(t,localfci_result,pc_results,num){
-  nbhd <- check_neighbors_retrieval(network_info$p,network_info$node_names,network_info$true_dag,t-1)+1
-  nbhd <- sort(c(t,nbhd))
+  if (length(t)>1){
+    nbhd_list <- lapply(t,function(target){
+      check_neighbors_retrieval(network_info$p,network_info$node_names,network_info$true_dag,target-1)+1
+    })
+    nbhd <- unique(unlist(nbhd_list))
+  } else {
+    nbhd <- check_neighbors_retrieval(network_info$p,network_info$node_names,network_info$true_dag,t-1)+1
+  }
+  nbhd <- sort(unique(c(t,nbhd)))
   # Zoom in on estimated and true DAGs (only the target and first-order neighbors)
   nodes_zoom <- network_info$node_names[nbhd]
   pc_mat <- matrix(pc_results$pc,nrow = network_info$p)[nbhd,nbhd]
@@ -289,7 +295,7 @@ neighborhood_results <- function(t,localfci_result,pc_results,num){
   results <- all_metrics(localfci_mat,
                          true_neighborhood_graph,
                          pc_mat,
-                         sapply(t,function(t) {which(nbhd==t)-1}),verbose = FALSE) # Need to check out the sapply here
+                         sapply(t,function(target) {which(nbhd==target)-1}),verbose = FALSE) # Need to check out the sapply here
   nbhd_metrics <- neighborhood_metrics(true_neighborhood_graph)
   mb_metrics <- mbRecovery(network_info$cpdag,localfci_result$referenceDAG,t)
   mb_time <- getTotalMBTime(localfci_result$mbList)

@@ -6,11 +6,11 @@ rds_dir <- paste0(home_dir,'/Dropbox/Academics/Research/Code/Networks/rds')
 data_gen_file <- paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/data_gen.R')
 
 ### Setup (Testing)
-source(paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/HoffmanNbhdArray/helperfunctions.R'))
+source(paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/HoffmanNbhd/helperfunctions.R'))
 sim_vals <- read.csv(paste0(home_dir,'/Desktop/ResultsNbhd-',format(Sys.Date(),"%m-%y"),'/sim_vals.csv'))
 array_num <- sample(1:nrow(sim_vals),1)
-array_num <- 1500
+array_num <- 1
 
 #cat("Simulation",array_num,file = "~/Desktop/lastSim.txt")
 
-source(paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/HoffmanNbhdArray/arraykernel.R'))
+source(paste0(home_dir,'/Dropbox/Academics/Research/Code/Scripts/HoffmanNbhd/arraykernel.R'))
