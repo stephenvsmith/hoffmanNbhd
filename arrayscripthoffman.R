@@ -11,7 +11,6 @@ data_gen_file <- paste0(home_dir,'/data_gen.R')
 ### Setup (Hoffman)
 source(paste0(home_dir,'/hoffmanNbhd/helperfunctions.R'))
 array_num <- as.numeric(Sys.getenv("SGE_TASK_ID"))
-
 source(paste0(home_dir,'/hoffmanNbhd/arraykernel.R'))
 
 ### Timing conclusion
