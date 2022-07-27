@@ -3,7 +3,7 @@
 ##########################################################################
 
 source(data_gen_file)
-num_trials <- 5
+num_trials <- 1
 max_targets <- 4
 
 data.grid <- data.frame(network = "asia",
@@ -22,24 +22,14 @@ data.grid <- data.frame(network = "asia",
 
 go_to_dir(result_dir)
 sim_vals <- read.csv("sim_vals.csv",stringsAsFactors = FALSE)[,-1]
-
-alpha <- sim_vals$alpha[array_num]
-mb_alpha <- sim_vals$mb_alpha[array_num]
 net <- sim_vals$net[array_num]
 high <- sim_vals$high[array_num]
 ub <- sim_vals$ub[array_num]
 n <- sim_vals$n[array_num]
-algo <- sim_vals$algo[array_num]
 
 cat("This is row",array_num,"of our simulation grid.\n")
 cat("Simulation Parameters:\n")
-cat("Significance:",alpha,"\n")
-cat("Markov Blanket Estimation Significance:",mb_alpha,"\n")
 cat("Network:",net,"\n")
-cat("high:",high,"\n")
-cat("ub:",ub,"\n")
-cat("n:",n,"\n")
-cat("MB algo:",algo,"\n")
 
 # Obtain network information, including the true DAG adj. mat.
 
@@ -68,21 +58,21 @@ curr_dir <- getwd()
 
 # Get results for each trial
 results_list <- lapply(1:num_trials,function(num){
-
-  # Run Global PC Algorithm
+  
   trial_num <- num
-  results_pc <- run_global_pc(df_list[[num]])
-
-    # Run Local FCI Algorithm
-  results_df <- mclapply(targets,
-                         run_fci_target,
-                         df=df_list[[num]],
-                         num,
-                         results_pc,
-                         algo,
-                         curr_dir,
-                         mc.preschedule = FALSE,mc.cores = 1)
-  results_final_df <- data.frame(do.call(rbind,results_df))
+  # Run Local FCI Algorithm
+  results_lfci_df <- mclapply(targets,
+                              run_fci_target,
+                              curr_dir,
+                              mc.preschedule = FALSE,mc.cores = 1)
+  results_lpc_df <- mclapply(targets,
+                             run_pc_target,
+                             curr_dir,
+                             mc.preschedule = FALSE,mc.cores = 1)
+  results_final_df_lfci <- data.frame(do.call(rbind,results_lfci_df))
+  results_final_df_lpc <- data.frame(do.call(rbind,results_lpc_df))
+  results_final_df <- results_final_df_lfci %>% 
+    left_join(results_final_df_lpc,by=c("targets"),suffix=c("_lfci","_lpc"))
   saveRDS(results_final_df,paste0("results_",array_num,"_",num,".rds"))
   setwd(curr_dir)
   return(results_final_df)
